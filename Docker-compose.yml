@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  mysqldb:
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: 1230
+      MYSQL_DATABASE: companydb
+    ports:
+      - "3305:3306"
+
+  app:
+    build: .
+    depends_on:
+      - mysqldb
+    ports:
+      - "3000:3000"

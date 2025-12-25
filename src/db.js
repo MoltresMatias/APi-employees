@@ -8,3 +8,4 @@ export const pool = createPool({
   database: DB_NAME,
   port: DB_PORT,
 });
+

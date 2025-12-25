@@ -1,17 +1,36 @@
 import { Router } from "express";
+import { body, param } from "express-validator";
 import { getEmployees, createEmployees, updateEmployees, deleteEmployees, getEmployeeById } from "../controllers/employees.controller.js";
+import { validateRequest } from "../validators/employees.validator.js";
 
 const router = Router();
 
 
-router.get('/empleados', getEmployees);
+router.get('/employees', getEmployees);
 
-router.get('/empleados/:id', getEmployeeById);
+router.get('/employees/:id', getEmployeeById);
 
-router.post('/empleados', createEmployees);
+router.post(
+    '/employees',
+    [
+        body('name').isString().notEmpty().withMessage('El nombre es requerido'),
+        body('salary').isNumeric().withMessage('El salario debe ser numérico'),
+        validateRequest
+    ],
+    createEmployees
+);
 
-router.patch('/empleados/:id', updateEmployees);
+router.patch(
+    '/employees/:id',
+    [
+        param('id').isInt().withMessage('ID inválido'),
+        body('name').optional().isString().withMessage('El nombre debe ser texto'),
+        body('salary').optional().isNumeric().withMessage('El salario debe ser numérico'),
+        validateRequest
+    ],
+    updateEmployees
+);
 
-router.delete('/empleados/:id', deleteEmployees);
+router.delete('/employees/:id', deleteEmployees);
 
 export default router;

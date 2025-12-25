@@ -1,6 +1,7 @@
 import express from "express";
 import employeesRoutes from "./routes/employees.routes.js";
 import indexRoutes from "./routes/index.routes.js";
+import { errorHandler } from "./Error.js";
 
 const app = express();
 app.use(express.json());
@@ -13,5 +14,5 @@ app.use((req, res, next) => {
     message: "Endpoint no encontrado",
   });
 });
-
+app.use(errorHandler);
 export default app;

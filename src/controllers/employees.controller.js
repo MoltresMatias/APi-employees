@@ -1,94 +1,61 @@
-import { pool } from "../db.js";
+import {
+  getAllEmployees,
+  getEmployeeByIdService,
+  createEmployeeService,
+  updateEmployeeService,
+  deleteEmployeeService
+} from "../services/employees.service.js";
 
-export const getEmployees = async (req, res) => {
+export const getEmployees = async (req, res, next) => {
   try {
-    const [rows] = await pool.query("SELECT * FROM employees");
+    const rows = await getAllEmployees();
     res.json(rows);
   } catch (error) {
-    return res.status(500).json({
-      message: "Algo salió mal",
-    });
+    next(error);
   }
 };
 
-export const getEmployeeById = async (req, res) => {
+export const getEmployeeById = async (req, res, next) => {
   try {
-    const [rows] = await pool.query("SELECT * FROM employees WHERE id = ?", [
-      req.params.id,
-    ]);
-
-    if (rows.length <= 0)
-      return res.status(404).json({
-        message: "Empleado no encontrado",
-      });
-
-    res.json(rows[0]);
+    const employee = await getEmployeeByIdService(req.params.id);
+    if (!employee)
+      return res.status(404).json({ message: "Empleado no encontrado" });
+    res.json(employee);
   } catch (error) {
-    return res.status(500).json({
-      message: "Algo salió mal",
-    });
+    next(error);
   }
 };
 
-export const createEmployees = async (req, res) => {
+export const createEmployees = async (req, res, next) => {
   const { name, salary } = req.body;
   try {
-    const [rows] = await pool.query(
-      "INSERT INTO employees (name, salary) VALUES (?, ?)",
-      [name, salary]
-    );
-    res.send({
-      id: rows.insertId,
-      name,
-      salary,
-    });
+    const employee = await createEmployeeService(name, salary);
+    res.send(employee);
   } catch (error) {
-    return res.status(500).json({
-      message: "Algo salió mal",
-    });
+    next(error);
   }
 };
 
-export const deleteEmployees = async (req, res) => {
+export const deleteEmployees = async (req, res, next) => {
   try {
-    const [result] = await pool.query("DELETE FROM employees WHERE id = ?", [
-      req.params.id,
-    ]);
-    if (result.affectedRows <= 0)
-      return res.status(404).json({
-        message: "Empleado no encontrado",
-      });
+    const deleted = await deleteEmployeeService(req.params.id);
+    if (!deleted)
+      return res.status(404).json({ message: "Empleado no encontrado" });
     res.sendStatus(204);
   } catch (error) {
-    return res.status(500).json({
-      message: "Algo salió mal",
-    });
+    next(error);
   }
 };
 
-export const updateEmployees = async (req, res) => {
+export const updateEmployees = async (req, res, next) => {
   const { id } = req.params;
   const { name, salary } = req.body;
-
   try {
-    const [result] = await pool.query(
-      "UPDATE employees SET name = IFNULL(?, name), salary = IFNULL(?, salary) WHERE id = ?",
-      [name, salary, id]
-    );
-
-    if (result.affectedRows === 0)
-      return res.status(404).json({
-        message: "Empleado no encontrado",
-      });
-
-    const [rows] = await pool.query("SELECT * FROM employees WHERE id = ?", [
-      id,
-    ]);
-
-    res.json(rows[0]);
+    const updated = await updateEmployeeService(id, name, salary);
+    if (!updated)
+      return res.status(404).json({ message: "Empleado no encontrado" });
+    res.json(updated);
   } catch (error) {
-    return res.status(500).json({
-      message: "Algo salió mal",
-    });
+    next(error);
   }
 };
