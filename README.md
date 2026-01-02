@@ -42,7 +42,7 @@ La lógica de negocio y acceso a datos está separada en la carpeta `services/` 
 
 ## Pruebas
 
-Para ejecutar las pruebas (cuando estén disponibles):
+Para ejecutar las pruebas:
 
 ```bash
 npm test
@@ -67,7 +67,3 @@ DB_USER=usuario
 DB_PASSWORD=contraseña
 DB_NAME=nombre_db
 ```
-
-## Contribuciones
-
-¡Las contribuciones son bienvenidas! Por favor, abre un issue o pull request.

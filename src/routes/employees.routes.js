@@ -5,7 +5,6 @@ import { validateRequest } from "../validators/employees.validator.js";
 
 const router = Router();
 
-
 router.get('/employees', getEmployees);
 
 router.get('/employees/:id', getEmployeeById);
